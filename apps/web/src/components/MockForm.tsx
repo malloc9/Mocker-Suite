@@ -1,0 +1,226 @@
+import React, { useState, useEffect } from 'react';
+
+interface MockFormProps {
+  onSubmit: (formData: MockFormData) => void;
+  initialData?: Partial<MockFormData>;
+}
+
+interface MockFormData {
+  method: string;
+  path: string;
+  statusCode: number;
+  responseBody: string;
+  responseHeaders: Record<string, string>;
+  description: string;
+  active: boolean;
+}
+
+const HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
+const DEFAULT_STATUS_CODES = [200, 201, 204, 301, 302, 400, 401, 403, 404, 500];
+
+export const MockForm: React.FC<MockFormProps> = ({ onSubmit, initialData = {} }) => {
+  const [formData, setFormData] = useState<MockFormData>({
+    method: initialData.method || 'GET',
+    path: initialData.path || '',
+    statusCode: initialData.statusCode || 200,
+    responseBody: initialData.responseBody || '',
+    responseHeaders: initialData.responseHeaders || {},
+    description: initialData.description || '',
+    active: initialData.active !== undefined ? initialData.active : true,
+  });
+
+  const [headers, setHeaders] = useState<Array<{ key: string; value: string }>>(
+    initialData.responseHeaders 
+      ? Object.entries(initialData.responseHeaders).map(([key, value]) => ({ key, value }))
+      : [{ key: '', value: '' }]
+  );
+
+  const handleInputChange = (
+    field: keyof Omit<MockFormData, 'responseHeaders' | 'responseBody'>,
+    value: string | number | boolean
+  ) => {
+    setFormData(prev => ({ ...prev, [field]: value as any }));
+  };
+
+  const handleBodyChange = (value: string) => {
+    setFormData(prev => ({ ...prev, responseBody: value }));
+  };
+
+  const addHeader = () => {
+    setHeaders([...headers, { key: '', value: '' }]);
+  };
+
+  const removeHeader = (index: number) => {
+    setHeaders(headers.filter((_, i) => i !== index));
+  };
+
+  const handleHeaderChange = (index: number, field: 'key' | 'value', value: string) => {
+    setHeaders(prev => {
+      const newHeaders = [...prev];
+      newHeaders[index][field] = value;
+      return newHeaders;
+    });
+  };
+
+  useEffect(() => {
+    // Convert headers array to object when headers change
+    const headersObj: Record<string, string> = {};
+    headers.forEach(({ key, value }) => {
+      if (key.trim()) {
+        headersObj[key.trim()] = value;
+      }
+    });
+    setFormData(prev => ({ ...prev, responseHeaders: headersObj }));
+  }, [headers]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  // Validate JSON
+  let jsonError: string | null = null;
+  try {
+    if (formData.responseBody.trim()) {
+      JSON.parse(formData.responseBody);
+    }
+  } catch (e) {
+    jsonError = 'Invalid JSON';
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div>
+          <label className="block text-sm font-medium mb-1">HTTP Method</label>
+          <select
+            value={formData.method}
+            onChange={(e) => handleInputChange('method', e.target.value)}
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            {HTTP_METHODS.map(method => (
+              <option key={method} value={method}>
+                {method}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Path</label>
+          <input
+            type="text"
+            value={formData.path}
+            onChange={(e) => handleInputChange('path', e.target.value)}
+            placeholder="/api/users/123"
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Status Code</label>
+          <select
+            value={formData.statusCode}
+            onChange={(e) => handleInputChange('statusCode', Number(e.target.value))}
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            {DEFAULT_STATUS_CODES.map(code => (
+              <option key={code} value={code}>
+                {code}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="md:col-span-2 lg:col-span-3">
+          <label className="block text-sm font-medium mb-1">Description</label>
+          <input
+            type="text"
+            value={formData.description}
+            onChange={(e) => handleInputChange('description', e.target.value)}
+            placeholder="User-friendly label for this mock"
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">Response Body</label>
+          <div className="relative">
+            <textarea
+              value={formData.responseBody}
+              onChange={(e) => handleBodyChange(e.target.value)}
+              rows={8}
+              placeholder='{"message": "Hello World"}'
+              className={`w-full px-3 py-2 border rounded-md font-mono focus:outline-none focus:ring-2 focus-ring-${
+                jsonError ? 'red-500' : 'blue-500'
+              } ${jsonError ? 'bg-red-50' : ''}`}
+            />
+            {jsonError && (
+              <p className="mt-1 text-sm text-red-600">{jsonError}</p>
+            )}
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Response Headers</label>
+          <div className="space-y-2">
+            {headers.map((header, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={header.key}
+                  onChange={(e) => handleHeaderChange(index, 'key', e.target.value)}
+                  placeholder="Header Name"
+                  className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  type="text"
+                  value={header.value}
+                  onChange={(e) => handleHeaderChange(index, 'value', e.target.value)}
+                  placeholder="Header Value"
+                  className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button
+                  onClick={() => removeHeader(index)}
+                  className="w-8 h-8 flex items-center justify-center text-red-500 hover:bg-red-100 rounded-md"
+                  disabled={headers.length <= 1}
+                >
+                  {"-"}
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={addHeader}
+              className="w-full flex items-center justify-center gap-2 text-sm font-medium text-blue-600 hover:bg-blue-50"
+            >
+              + Add Header
+            </button>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            checked={formData.active}
+            onChange={(e) => handleInputChange('active', e.target.checked)}
+            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+          />
+          <label className="text-sm font-medium text-gray-700">Active</label>
+        </div>
+      </div>
+
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+          disabled={!formData.path || jsonError !== null}
+        >
+          Save Mock
+        </button>
+      </div>
+    </form>
+  );
+};
