@@ -3,16 +3,17 @@
 	"version": "1.0.0",
 	"description": "",
 	"main": "index.js",
-	"scripts": {
-		"test": "pnpm -r test",
-		"dev:web": "pnpm --filter @mocker-suite/web dev",
-		"dev:api": "pnpm --filter @mocker-suite/api dev",
-		"lint": "pnpm -r lint",
-		"format": "biome format --write .",
-		"format:check": "biome format .",
-		"check": "biome check .",
-		"prepare": "husky"
-	},
+  "scripts": {
+    "test": "pnpm -r test",
+    "dev": "pnpm -r dev",
+    "dev:web": "pnpm --filter @mocker-suite/web dev",
+    "dev:api": "pnpm --filter @mocker-suite/api dev",
+    "lint": "pnpm -r lint",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "check": "biome check .",
+    "prepare": "husky"
+  },
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
