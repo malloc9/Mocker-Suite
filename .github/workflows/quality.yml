@@ -12,6 +12,7 @@ jobs:
       - run: corepack prepare pnpm@11.1.2 --activate
       - run: echo "$HOME/.local/share/corepack/bin" >> $GITHUB_PATH
       - run: pnpm install
-      - run: pnpm run format:check
+      - run: pnpm format
+      - run: git diff --exit-code || (echo "Files need formatting. Please run pnpm format and commit the changes."; exit 1)
       - run: pnpm run lint
       - run: pnpm run test
