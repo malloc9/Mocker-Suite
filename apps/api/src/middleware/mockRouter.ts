@@ -25,7 +25,7 @@ export function mockRouter(req: Request, res: Response, next: NextFunction) {
 			Object.entries(headers).forEach(([key, value]) => {
 				res.setHeader(key, value);
 			});
-		} catch (e) {
+		} catch (_e) {
 			console.error("Failed to parse response_headers JSON:", e);
 			// Continue without custom headers
 		}
@@ -37,7 +37,7 @@ export function mockRouter(req: Request, res: Response, next: NextFunction) {
 			// Try to parse as JSON to send as JSON
 			const parsedBody = JSON.parse(mock.response_body);
 			res.json(parsedBody);
-		} catch (e) {
+		} catch (_e) {
 			// If not valid JSON, send as plain text
 			res.send(mock.response_body);
 		}
