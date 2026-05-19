@@ -41,7 +41,7 @@ router.post("/", (req, res) => {
 });
 
 // GET /api/mocks: List all mock configurations
-router.get("/", (req, res) => {
+router.get("/", (_req, res) => {
 	try {
 		const mocks = findMocks();
 		res.json(mocks);
