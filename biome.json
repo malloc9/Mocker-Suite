@@ -7,7 +7,7 @@
 	},
 	"files": {
 		"ignoreUnknown": true,
-		"experimentalScannerIgnores": ["apps/web/.next/**", "node_modules/**"]
+		"includes": ["**", "!!**/node_modules", "!!**/apps/web/.next"]
 	},
 	"formatter": {
 		"enabled": true,

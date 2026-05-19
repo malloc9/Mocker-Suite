@@ -5,12 +5,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 11.1.2
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: corepack enable
-      - run: corepack prepare pnpm@11.1.2 --activate
-      - run: echo "$HOME/.local/share/corepack/bin" >> $GITHUB_PATH
+          cache: 'pnpm'
       - run: pnpm install
       - run: pnpm format
       - run: git diff --exit-code || (echo "Files need formatting. Please run pnpm format and commit the changes."; exit 1)

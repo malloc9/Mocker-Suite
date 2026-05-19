@@ -8,12 +8,12 @@
 		"dev": "pnpm -r dev",
 		"dev:web": "pnpm --filter @mocker-suite/web dev",
 		"dev:api": "pnpm --filter @mocker-suite/api dev",
-		"lint": "pnpm -r lint",
-		"format": "pnpm exec biome format --write .",
-		"format:check": "pnpm exec biome format .",
-		"check": "biome check .",
-		"prepare": "husky"
+		"format": "biome format --write .",
+		"format:check": "biome format .",
+		"lint": "biome check .",
+		"prepare": "husky install"
 	},
+	"packageManager": "pnpm@11.1.2",
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
