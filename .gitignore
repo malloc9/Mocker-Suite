@@ -1,2 +1,4 @@
 node_modules/
 apps/api/node_modules/.vite/vitest/results.json
+pnpm-lock.yaml
+pnpm-lock.yaml
