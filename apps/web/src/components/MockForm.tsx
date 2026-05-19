@@ -30,60 +30,77 @@ export const MockForm: React.FC<MockFormProps> = ({
 		responseBody: initialData.responseBody || "",
 		responseHeaders: initialData.responseHeaders || {},
 		description: initialData.description || "",
-       active: initialData.active !== undefined ? initialData.active : true,
-   });
+		active: initialData.active !== undefined ? initialData.active : true,
+	});
 
-    const [headers, setHeaders] = useState<Array<{ id: string; key: string; value: string }>>(
-        initialData.responseHeaders
-            ? Object.entries(initialData.responseHeaders).map(([key, value], idx) => ({
-                  id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${idx}`,
-                  key,
-                  value,
-                }))
-            : [{ id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, key: "", value: "" }],
-    );
+	const [headers, setHeaders] = useState<
+		Array<{ id: string; key: string; value: string }>
+	>(
+		initialData.responseHeaders
+			? Object.entries(initialData.responseHeaders).map(
+					([key, value], idx) => ({
+						id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${idx}`,
+						key,
+						value,
+					}),
+				)
+			: [
+					{
+						id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+						key: "",
+						value: "",
+					},
+				],
+	);
 
-    const handleInputChange = (
-        field: keyof Omit<MockFormData, "responseHeaders" | "responseBody">,
-        value: string | number | boolean,
-    ) => {
-        setFormData((prev) => ({ ...prev, [field]: value }));
-    };
+	const handleInputChange = (
+		field: keyof Omit<MockFormData, "responseHeaders" | "responseBody">,
+		value: string | number | boolean,
+	) => {
+		setFormData((prev) => ({ ...prev, [field]: value }));
+	};
 
-    const handleBodyChange = (value: string) => {
-        setFormData((prev) => ({ ...prev, responseBody: value }));
-    };
+	const handleBodyChange = (value: string) => {
+		setFormData((prev) => ({ ...prev, responseBody: value }));
+	};
 
-    const addHeader = () => {
-        setHeaders([...headers, { id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, key: "", value: "" }]);
-    };
+	const addHeader = () => {
+		setHeaders([
+			...headers,
+			{
+				id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+				key: "",
+				value: "",
+			},
+		]);
+	};
 
-    const removeHeader = (id: string) => {
-        setHeaders(headers.filter((header) => header.id !== id));
-    };
+	const removeHeader = (id: string) => {
+		setHeaders(headers.filter((header) => header.id !== id));
+	};
 
-    const handleHeaderChange = (
-        id: string,
-        field: "key" | "value",
-        value: string,
-    ) => {
-        setHeaders((prev) =>
-            prev.map((header) =>
-                header.id === id ? { ...header, [field]: value } : header
-            )
-        );
-    };
-   
-   useEffect(() => {
-       // Convert headers array to object when headers change
-       const headersObj: Record<string, string> = {};
-       headers.forEach(({ key, value }) => {
-           if (key.trim()) {
-               headersObj[key.trim()] = value;
-           }
-       });
-       setFormData((prev) => ({ ...prev, responseHeaders: headersObj }));
-   }, [headers]);
+	const handleHeaderChange = (
+		id: string,
+		field: "key" | "value",
+		value: string,
+	) => {
+		setHeaders((prev) =>
+			prev.map((header) =>
+				header.id === id ? { ...header, [field]: value } : header,
+			),
+		);
+	};
+
+	useEffect(() => {
+		// Convert headers array to object when headers change
+		const headersObj: Record<string, string> = {};
+		headers.forEach(({ key, value }) => {
+			if (key.trim()) {
+				headersObj[key.trim()] = value;
+			}
+		});
+		setFormData((prev) => ({ ...prev, responseHeaders: headersObj }));
+	}, [headers]);
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -104,9 +121,15 @@ export const MockForm: React.FC<MockFormProps> = ({
 		<form onSubmit={handleSubmit} className="space-y-6">
 			<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 				<div>
-					<label htmlFor="method-select" className="block text-sm font-medium mb-1">HTTP Method</label>
+					<label
+						htmlFor="method-select"
+						className="block text-sm font-medium mb-1"
+					>
+						HTTP Method
+					</label>
 					<select
-						value={formData.method} id="method-select"
+						value={formData.method}
+						id="method-select"
 						onChange={(e) => handleInputChange("method", e.target.value)}
 						className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 					>
@@ -119,10 +142,16 @@ export const MockForm: React.FC<MockFormProps> = ({
 				</div>
 
 				<div>
-					<label htmlFor="path-input" className="block text-sm font-medium mb-1">Path</label>
+					<label
+						htmlFor="path-input"
+						className="block text-sm font-medium mb-1"
+					>
+						Path
+					</label>
 					<input
 						type="text"
-						value={formData.path} id="path-input"
+						value={formData.path}
+						id="path-input"
 						onChange={(e) => handleInputChange("path", e.target.value)}
 						placeholder="/api/users/123"
 						className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -130,9 +159,15 @@ export const MockForm: React.FC<MockFormProps> = ({
 				</div>
 
 				<div>
-					<label htmlFor="status-code-select" className="block text-sm font-medium mb-1">Status Code</label>
+					<label
+						htmlFor="status-code-select"
+						className="block text-sm font-medium mb-1"
+					>
+						Status Code
+					</label>
 					<select
-						value={formData.statusCode} id="status-code-select"
+						value={formData.statusCode}
+						id="status-code-select"
 						onChange={(e) =>
 							handleInputChange("statusCode", Number(e.target.value))
 						}
@@ -147,10 +182,16 @@ export const MockForm: React.FC<MockFormProps> = ({
 				</div>
 
 				<div className="md:col-span-2 lg:col-span-3">
-					<label htmlFor="description-input" className="block text-sm font-medium mb-1">Description</label>
+					<label
+						htmlFor="description-input"
+						className="block text-sm font-medium mb-1"
+					>
+						Description
+					</label>
 					<input
 						type="text"
-						value={formData.description} id="description-input"
+						value={formData.description}
+						id="description-input"
 						onChange={(e) => handleInputChange("description", e.target.value)}
 						placeholder="User-friendly label for this mock"
 						className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -160,12 +201,16 @@ export const MockForm: React.FC<MockFormProps> = ({
 
 			<div className="space-y-4">
 				<div>
-					<label htmlFor="response-body-textarea" className="block text-sm font-medium mb-1">
+					<label
+						htmlFor="response-body-textarea"
+						className="block text-sm font-medium mb-1"
+					>
 						Response Body
 					</label>
 					<div className="relative">
 						<textarea
-							value={formData.responseBody} id="response-body-textarea" id="response-body-textarea"
+							value={formData.responseBody}
+							id="response-body-textarea"
 							onChange={(e) => handleBodyChange(e.target.value)}
 							rows={8}
 							placeholder='{"message": "Hello World"}'
@@ -180,7 +225,10 @@ export const MockForm: React.FC<MockFormProps> = ({
 				</div>
 
 				<div>
-					<label htmlFor="response-headers-div" className="block text-sm font-medium mb-1">
+					<label
+						htmlFor="response-headers-div"
+						className="block text-sm font-medium mb-1"
+					>
 						Response Headers
 					</label>
 					<div id="response-headers-div" className="space-y-2">
@@ -204,7 +252,8 @@ export const MockForm: React.FC<MockFormProps> = ({
 									placeholder="Header Value"
 									className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 								/>
-								<button type="button"
+								<button
+									type="button"
 									onClick={() => removeHeader(index)}
 									className="w-8 h-8 flex items-center justify-center text-red-500 hover:bg-red-100 rounded-md"
 									disabled={headers.length <= 1}
@@ -226,11 +275,17 @@ export const MockForm: React.FC<MockFormProps> = ({
 				<div className="flex items-center gap-3">
 					<input
 						type="checkbox"
-						checked={formData.active} id="active-checkbox"
+						checked={formData.active}
+						id="active-checkbox"
 						onChange={(e) => handleInputChange("active", e.target.checked)}
 						className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
 					/>
-					<label htmlFor="active-checkbox" className="text-sm font-medium text-gray-700">Active</label>
+					<label
+						htmlFor="active-checkbox"
+						className="text-sm font-medium text-gray-700"
+					>
+						Active
+					</label>
 				</div>
 			</div>
 
