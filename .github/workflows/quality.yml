@@ -8,8 +8,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
-      - run: npm i -g pnpm@11.1.2
+      - run: corepack enable
+      - run: corepack prepare pnpm@11.1.2 --activate
+      - run: echo "$HOME/.local/share/corepack/bin" >> $GITHUB_PATH
       - run: pnpm install
       - run: pnpm run format:check
       - run: pnpm run lint
