@@ -3,7 +3,6 @@ on: [push, pull_request]
 jobs:
   quality:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v2
@@ -11,16 +10,9 @@ jobs:
           version: 11.1.2
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
           cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
-      - name: Check formatting
-        run: pnpm format
-      - name: Verify formatting
-        run: |
-          git diff --exit-code -- ':!node_modules' || (echo "Files need formatting. Please run pnpm format and commit the changes."; exit 1)
-      - name: Lint code
-        run: pnpm run lint
-      - name: Run tests
-        run: pnpm run test
+      - run: pnpm install
+      - run: pnpm run format:check
+      - run: pnpm run lint
+      - run: pnpm run test
